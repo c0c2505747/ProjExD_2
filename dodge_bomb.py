@@ -55,6 +55,19 @@ def gameover(screen: pg.Surface) -> None:  # 演習1：ゲームオーバー画�
     time.sleep(5)  # 5秒間暗い画面のまま
 
 
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+    bb_accs = [a for a in range(1, 11)]
+    return tuple(bb_imgs),tuple(bb_accs)
+     
+
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -71,16 +84,28 @@ def main():
     vx, vy = +5, +5  #練習2：爆弾の速度
     clock = pg.time.Clock()
     tmr = 0
+    
+    imgs, accs = init_bb_imgs()
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
         screen.blit(bg_img, [0, 0]) 
 
+        avx = vx*accs[min(tmr//500, 9)]
+        avy = vy*accs[min(tmr//500, 9)]
+        bb_img = imgs[min(tmr//500, 9)]
+        bb_rct.width = bb_img.get_rect().width
+        
+
+
+
         if kk_rct.colliderect(bb_rct):  #練習4：kkとbbのrectが重なっていたら
             print("Game Over")
             gameover(screen)
             return(screen)
+
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -100,7 +125,7 @@ def main():
         if check_bound(kk_rct) != (True, True):  #練習3：どこかしらはみ出ているならば
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  #先ほどの動きをキャンセルする
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)  #練習2：爆弾が動く
+        bb_rct.move_ip(avx, avy)  #練習2：爆弾が動く
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # yoko == False
             vx *= -1
