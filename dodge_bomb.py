@@ -50,6 +50,10 @@ def main():
                 return
         screen.blit(bg_img, [0, 0]) 
 
+        if kk_rct.colliderect(bb_rct):  #練習4：kkとbbのrectが重なっていたら
+            print("Game Over")
+            return
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         # if key_lst[pg.K_UP]:
@@ -65,7 +69,7 @@ def main():
                 sum_mv[0] += tpl[0]  # 横方向移動量
                 sum_mv[1] += tpl[1]  # 縦方向移動量
         kk_rct.move_ip(sum_mv)
-        if check_bound(kk_rct) != (True, True):  #どこかしらはみ出ているならば
+        if check_bound(kk_rct) != (True, True):  #練習3：どこかしらはみ出ているならば
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  #先ほどの動きをキャンセルする
         screen.blit(kk_img, kk_rct)
         bb_rct.move_ip(vx, vy)  #練習2：爆弾が動く
