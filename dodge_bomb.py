@@ -30,6 +30,11 @@ def check_bound(rect: pg.Rect) ->tuple[bool, bool]:
 
 
 def gameover(screen: pg.Surface) -> None:  # 演習1：ゲームオーバー画面
+    """
+    引数：Surface
+    戻り値：なし
+    ゲームオーバー画面の設定
+    """
     blackout = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(blackout, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))  # 黒の画面の作成
 
@@ -55,14 +60,18 @@ def gameover(screen: pg.Surface) -> None:  # 演習1：ゲームオーバー画�
     time.sleep(5)  # 5秒間暗い画面のまま
 
 
-def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:  # 演習2：時間とともに爆弾が拡大,加速する
+    """
+    引数：なし
+    戻り値：爆弾の大きさリストのタプル,加速度リストのタプル
+    """
     bb_imgs = []
-    for r in range(1, 11):
+    for r in range(1, 11):  # 爆弾の大きさのリスト
         bb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
         bb_img.set_colorkey((0, 0, 0))
         bb_imgs.append(bb_img)
-    bb_accs = [a for a in range(1, 11)]
+    bb_accs = [a for a in range(1, 11)]  # 爆弾の加速度のリスト
     return tuple(bb_imgs),tuple(bb_accs)
      
 
@@ -84,7 +93,6 @@ def main():
     vx, vy = +5, +5  #練習2：爆弾の速度
     clock = pg.time.Clock()
     tmr = 0
-    
     imgs, accs = init_bb_imgs()
 
     while True:
@@ -97,15 +105,12 @@ def main():
         avy = vy*accs[min(tmr//500, 9)]
         bb_img = imgs[min(tmr//500, 9)]
         bb_rct.width = bb_img.get_rect().width
-        
-
-
-
+        bb_rct.height = bb_img.get_rect().height  # 演習2：時間とともに爆弾が拡大,加速する　の実装
+            
         if kk_rct.colliderect(bb_rct):  #練習4：kkとbbのrectが重なっていたら
             print("Game Over")
             gameover(screen)
             return(screen)
-
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
