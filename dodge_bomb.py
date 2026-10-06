@@ -1,5 +1,6 @@
 import os
 import random
+import time
 import sys
 import pygame as pg
 
@@ -28,6 +29,32 @@ def check_bound(rect: pg.Rect) ->tuple[bool, bool]:
     return yoko,tate
 
 
+def gameover(screen: pg.Surface) -> None:  # 演習1：ゲームオーバー画面
+    blackout = pg.Surface((WIDTH, HEIGHT))
+    pg.draw.rect(blackout, (0, 0, 0), pg.Rect(0, 0, WIDTH, HEIGHT))  # 黒の画面の作成
+
+    blackout.set_alpha(180)  # 透明度の設定
+
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("Game Over", True, (255, 255, 255))
+    txt_rct = txt.get_rect()
+    txt_rct.center = (WIDTH//2, HEIGHT//2)
+    blackout.blit(txt, txt_rct)  # 白文字GameOverの表示
+
+    kk_img2 = pg.transform.rotozoom(pg.image.load("fig/8.png"),0,1)
+    kk_img3 = pg.transform.rotozoom(pg.image.load("fig/8.png"),0,1)
+    kk_img2_rct = kk_img2.get_rect()
+    kk_img2_rct.center = (WIDTH//4, HEIGHT//2)
+    kk_img3_rct = kk_img3.get_rect()
+    kk_img3_rct.center = (WIDTH//4*3, HEIGHT//2)
+    blackout.blit(kk_img2, kk_img2_rct)
+    blackout.blit(kk_img3, kk_img3_rct)  # こうかとんの表示
+
+    screen.blit(blackout, [0,0])
+    pg.display.update()
+    time.sleep(5)  # 5秒間暗い画面のまま
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -52,7 +79,8 @@ def main():
 
         if kk_rct.colliderect(bb_rct):  #練習4：kkとbbのrectが重なっていたら
             print("Game Over")
-            return
+            gameover(screen)
+            return(screen)
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
